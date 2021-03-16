@@ -1,27 +1,57 @@
-# 列の数 [列 → 行]
-col_nums = [
-    [5], [3, 1], [1, 1, 1], [1, 2], [5]
-]
 # 行の数 [行 → 列]
 row_nums = [
     [3, 1], [2, 2], [3, 1], [1, 2], [5]
 ]
-
-result_data = [
-    [' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ']
+# 列の数 [列 → 行]
+col_nums = [
+    [5], [3, 1], [1, 1, 1], [1, 2], [5]
 ]
 
-# result_data = [
-#     ['o', 'o', 'o', 'x', 'o'],
-#     ['o', 'o', 'x', 'o', 'o'],
-#     ['o', 'o', 'o', 'x', 'o'],
-#     ['o', 'x', 'x', 'o', 'o'],
-#     ['o', 'o', 'o', 'o', 'o']
-# ]
+# イラストロジック解析クラス
+class Solver
+    attr_accessor :result_data
+
+    def initialize(row_nums, col_nums)
+        @row_nums = row_nums
+        @col_nums = col_nums
+
+        @result_data_row_size = @col_nums.size
+        @result_data_col_size = @row_nums.size
+    end
+
+    def check_row_complete(row_idx)
+        row_num = @row_nums[row_idx]
+        space_size = row_num.size - 1
+        if row_num.sum + space_size == @result_data_col_size then
+            r_cur = 0
+            row_num.each do |r_num|
+                r_num.times do |i|
+                    @result_data[row_idx][r_cur] = 'o'
+                    r_cur += 1
+                end
+                if r_cur < @result_data_col_size then
+                    @result_data[row_idx][r_cur] = 'x'
+                    r_cur += 1
+                end
+            end
+        end
+    end
+
+    def solve
+        # 空(nil)で初期化
+        @result_data = Array.new(@result_data_row_size).map do |r|
+            Array.new(@result_data_col_size)
+        end
+
+        # 行の完成チェック
+        @result_data_row_size.times do |row_idx|
+            check_row_complete(row_idx)
+        end
+
+        return @result_data
+    end
+
+end
 
 # 結果出力クラス
 class ResultPrinter
@@ -128,6 +158,24 @@ EOS
     end
 end
 
+###########
+# 問題
+###########
+
+# 解析クラスで解析
+solver = Solver.new(row_nums, col_nums)
+result_data = solver.solve
+
+# result_data = [
+#     ['o', 'o', 'o', 'x', 'o'],
+#     ['o', 'o', 'x', 'o', 'o'],
+#     ['o', 'o', 'o', 'x', 'o'],
+#     ['o', 'x', 'x', 'o', 'o'],
+#     ['o', 'o', 'o', 'o', 'o']
+# ]
+
 # 結果出力
 rp = ResultPrinter.new(row_nums, col_nums, result_data)
 rp.exec_output
+
+puts "finished."
